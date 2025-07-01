@@ -108,7 +108,8 @@ app = FastAPI(title="Vishwajit Singh Portfolio Chatbot")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For production: restrict to portfolio domain
+    allow_origins=["https://vishus1304.github.io"],  # ✅ allow frontend
+    allow_credentials=True,
     allow_methods=["GET"],
     allow_headers=["*"],
 )
