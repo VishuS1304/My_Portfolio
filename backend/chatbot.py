@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 # Config
 load_dotenv()
 API_KEY    = os.getenv("NVIDIA_API_KEY", "")# ✅ Correct (cross-platform & works on Render)
-RESUME_PDF = os.path.join(os.path.dirname(__file__), "Vishwajit_Resume_250603_101508.pdf")
+RESUME_PDF = os.path.join(os.path.dirname(__file__), "backend/Vishwajit_Resume_250603_101508.pdf")
 if not API_KEY.startswith("nvapi-"):
     raise RuntimeError("Invalid NVIDIA_API_KEY")
 
