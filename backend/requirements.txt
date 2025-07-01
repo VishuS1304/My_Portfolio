@@ -1,12 +1,5 @@
 fastapi
 uvicorn
-langchain
-langchain-nvidia-ai-endpoints
-aiofiles
-python-multipart
-openai
 python-dotenv
 PyPDF2
-langchain-community
-faiss-cpu
-sentence-transformers
+langchain_nvidia_ai_endpoints
