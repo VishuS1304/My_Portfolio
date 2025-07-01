@@ -26,7 +26,7 @@ if not API_KEY.startswith("nvapi-"):
 # -------------------------------
 # Resume (Optional for additional context)
 # -------------------------------
-RESUME_PDF = os.path.join(os.path.dirname(__file__), "D:\Vs_code\portfolio_website\Vishwajit_Resume_250603_101508.pdf")
+RESUME_PDF = os.path.join(os.path.dirname(__file__), "Vishwajit_Resume_250603_101508.pdf")
 
 def load_resume(path: str, max_chars=15000) -> str:
     try:
