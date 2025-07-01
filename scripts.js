@@ -1,31 +1,26 @@
-// frontend/scripts.js
-
-// ——————————————————————————————
-// Utility: Debounce
-// ——————————————————————————————
-function debounce(fn, wait = 50) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn.apply(this, args), wait);
-  };
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   // ———————————————————————————————————————————
-  // 1) Mobile Menu Toggle + Auto‑close
+  // 1) Debounce Utility
   // ———————————————————————————————————————————
-  const menu   = document.getElementById('menu');
-  const toggle = document.querySelector('.mobile-toggle');
-  function toggleMobileMenu() {
-    const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!expanded));
-    menu.classList.toggle('active');
+  function debounce(fn, wait = 50) {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn.apply(this, args), wait);
+    };
   }
+
+  // ———————————————————————————————————————————
+  // 2) Mobile Menu Toggle
+  // ———————————————————————————————————————————
+  const menu = document.getElementById('menu');
+  const toggle = document.querySelector('.mobile-toggle');
   if (toggle && menu) {
     toggle.addEventListener('click', e => {
       e.stopPropagation();
-      toggleMobileMenu();
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      menu.classList.toggle('active');
     });
     document.addEventListener('click', e => {
       if (!menu.contains(e.target) && !toggle.contains(e.target)) {
@@ -42,27 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ———————————————————————————————————————————
-  // 2) Header Hide on Scroll
-  // ———————————————————————————————————————————
-  (function () {
-    let lastY = 0;
-    const header = document.querySelector('header');
-    window.addEventListener('scroll', debounce(() => {
-      const currentY = window.scrollY;
-      const isMenuOpen = menu && menu.classList.contains('active');
-      if (!isMenuOpen) {
-        if (currentY > lastY && currentY > 100) {
-          header.classList.add('hide');
-        } else {
-          header.classList.remove('hide');
-        }
-      }
-      lastY = currentY;
-    }, 100));
-  })();
-
-  // ———————————————————————————————————————————
-  // 3) Chatbot Widget Logic
+  // 3) Chatbot Setup
   // ———————————————————————————————————————————
   const chatContainer = document.getElementById('chatbot-container');
   const chatToggle    = document.getElementById('chatbot-toggle');
@@ -72,34 +47,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatForm      = document.getElementById('chatbot-form');
   const chatInput     = document.getElementById('chatbot-input');
   const chatSend      = document.getElementById('chatbot-send');
-  const API_BASE      = 'https://my-portfolio-f6br.onrender.com';
+
+  // 👇 Use this in production (deployed site):
+  const API_BASE = 'https://my-portfolio-uene.onrender.com';
+
+  // ✅ Optional for local testing
+  // const API_BASE = 'http://127.0.0.1:8000';
+
   let sse = null;
 
-  function openChat() {
-    chatContainer.classList.add('expanded');
-    chatToggle.setAttribute('aria-expanded', 'true');
-    chatWidget.style.display = 'flex';
-    chatInput.focus();
-  }
-  function closeChat() {
-    chatContainer.classList.remove('expanded');
-    chatToggle.setAttribute('aria-expanded', 'false');
-    chatWidget.style.display = 'none';
-    if (sse) { sse.close(); sse = null; }
-    chatSend.disabled = false;
-  }
-
-  chatToggle.addEventListener('click', () =>
-    chatContainer.classList.contains('expanded') ? closeChat() : openChat()
-  );
-  chatClose.addEventListener('click', closeChat);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && chatContainer.classList.contains('expanded')) {
-      closeChat();
-    }
-  });
-
-  function appendMessage(sender, text='') {
+  function appendMessage(sender, text = '') {
     const div = document.createElement('div');
     div.className = `message ${sender}`;
     div.textContent = text;
@@ -108,7 +65,35 @@ document.addEventListener('DOMContentLoaded', () => {
     return div;
   }
 
-  chatForm.addEventListener('submit', e => {
+  function openChat() {
+    chatContainer.classList.add('expanded');
+    chatToggle.setAttribute('aria-expanded', 'true');
+    chatWidget.style.display = 'flex';
+    chatInput.focus();
+  }
+
+  function closeChat() {
+    chatContainer.classList.remove('expanded');
+    chatToggle.setAttribute('aria-expanded', 'false');
+    chatWidget.style.display = 'none';
+    if (sse) {
+      sse.close();
+      sse = null;
+    }
+    chatSend.disabled = false;
+  }
+
+  chatToggle?.addEventListener('click', () =>
+    chatContainer.classList.contains('expanded') ? closeChat() : openChat()
+  );
+  chatClose?.addEventListener('click', closeChat);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && chatContainer.classList.contains('expanded')) {
+      closeChat();
+    }
+  });
+
+  chatForm?.addEventListener('submit', e => {
     e.preventDefault();
     const text = chatInput.value.trim();
     if (!text) return;
@@ -116,27 +101,57 @@ document.addEventListener('DOMContentLoaded', () => {
     appendMessage('user', text);
     chatInput.value = '';
     chatSend.disabled = true;
+
     const botDiv = appendMessage('bot');
-    sse = new EventSource(`${API_BASE}/chat/stream?message=${encodeURIComponent(text)}`);
-    sse.onmessage = evt => {
-      try {
-        const { reply } = JSON.parse(evt.data);
-        botDiv.textContent += reply;
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      } catch {}
-    };
-    sse.addEventListener('end', () => { chatSend.disabled = false; sse.close(); sse = null; });
-    sse.onerror = () => {
-      botDiv.textContent += '\n[Connection error]';
+
+    // ✅ Close old SSE connection before opening new
+    if (sse) {
+      sse.close();
+      sse = null;
+    }
+
+    try {
+      sse = new EventSource(`${API_BASE}/chat/stream?message=${encodeURIComponent(text)}`);
+
+      sse.onmessage = evt => {
+        try {
+          const { reply } = JSON.parse(evt.data);
+          botDiv.textContent += reply;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        } catch (err) {
+          console.error('Parse error:', err);
+        }
+      };
+
+      sse.addEventListener('end', () => {
+        chatSend.disabled = false;
+        if (sse) {
+          sse.close();
+          sse = null;
+        }
+      });
+
+      sse.onerror = () => {
+        botDiv.textContent += '\n⚠️ [Connection error]';
+        chatSend.disabled = false;
+        if (sse) {
+          sse.close();
+          sse = null;
+        }
+      };
+    } catch (err) {
+      console.error('Connection error:', err);
+      botDiv.textContent = '❌ Unable to connect to server.';
       chatSend.disabled = false;
-      if (sse) { sse.close(); sse = null; }
-    };
+    }
   });
 
-  window.addEventListener('beforeunload', () => { if (sse) sse.close(); });
+  window.addEventListener('beforeunload', () => {
+    if (sse) sse.close();
+  });
 
   // ———————————————————————————————————————————
-  // 4) Scroll‑to‑Top Button
+  // 4) Scroll To Top
   // ———————————————————————————————————————————
   const scrollBtn = document.getElementById('scroll-up');
   const toggleScrollBtn = () => {
@@ -144,12 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
     else scrollBtn.classList.remove('show');
   };
   window.addEventListener('scroll', debounce(toggleScrollBtn, 100));
-  scrollBtn.addEventListener('click', () => {
+  scrollBtn?.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   // ———————————————————————————————————————————
-  // 5) Footer Date & Time
+  // 5) Date & Time in Footer
   // ———————————————————————————————————————————
   const dtEl = document.getElementById('currentDateTime');
   const yrEl = document.getElementById('year');
@@ -159,65 +174,57 @@ document.addEventListener('DOMContentLoaded', () => {
     yrEl && (yrEl.textContent = now.getFullYear());
   }
   updateDateTime();
-  setInterval(updateDateTime, 60_000);
+  setInterval(updateDateTime, 60000);
 
   // ———————————————————————————————————————————
-  // 6) Email/Contact Widget Logic
+  // 6) Email Contact Widget (Optional)
   // ———————————————————————————————————————————
-// Contact Form Toggle Logic with accessibility fix using `inert`
-const contactToggle = document.getElementById('email-toggle');
-const contactWidget = document.getElementById('contact-widget');
-const contactClose  = document.getElementById('contact-close');
-const contactForm   = document.getElementById('contact-form');
-const cfStatus      = document.getElementById('cf-status');
+  const contactToggle = document.getElementById('email-toggle');
+  const contactWidget = document.getElementById('contact-widget');
+  const contactClose = document.getElementById('contact-close');
+  const contactForm = document.getElementById('contact-form');
+  const cfStatus = document.getElementById('cf-status');
 
-function openContact() {
-  contactWidget.removeAttribute('inert');               // Re-enable access
-  contactWidget.style.display = 'flex';
-  contactWidget.classList.add('open');
-  contactToggle.setAttribute('aria-expanded', 'true');
-  setTimeout(() => {
-    const firstInput = contactWidget.querySelector('input');
-    firstInput?.focus(); // Optional focus handling
-  }, 100);
-}
-
-function closeContact() {
-  if (document.activeElement && contactWidget.contains(document.activeElement)) {
-    document.activeElement.blur();                      // Prevent focused elements inside hidden widget
+  function openContact() {
+    contactWidget.removeAttribute('inert');
+    contactWidget.style.display = 'flex';
+    contactWidget.classList.add('open');
+    contactToggle.setAttribute('aria-expanded', 'true');
+    setTimeout(() => contactWidget.querySelector('input')?.focus(), 100);
   }
 
-  contactWidget.setAttribute('inert', '');              // Block interactions/accessibility
-  contactWidget.style.display = 'none';
-  contactWidget.classList.remove('open');
-  contactToggle.setAttribute('aria-expanded', 'false');
-}
-
-// Toggle open/close
-contactToggle.addEventListener('click', () => {
-  const isOpen = contactWidget.style.display === 'flex';
-  isOpen ? closeContact() : openContact();
-});
-contactClose.addEventListener('click', closeContact);
-
-// Submit using EmailJS
-contactForm.addEventListener('submit', async e => {
-  e.preventDefault();
-  cfStatus.textContent = 'Sending…';
-  try {
-    await emailjs.send('service_saxdc56','template_ezh0s0d',{
-      user_name:  contactForm.user_name.value,
-      user_email: contactForm.user_email.value,
-      subject:    contactForm.subject.value,
-      message:    contactForm.message.value,
-    });
-    cfStatus.textContent = '✅ Sent!';
-    contactForm.reset();
-  } catch(err) {
-    cfStatus.textContent = '❌ Failed to send.';
-    console.error(err);
-  } finally {
-    setTimeout(() => cfStatus.textContent = '', 5000);
+  function closeContact() {
+    document.activeElement?.blur();
+    contactWidget.setAttribute('inert', '');
+    contactWidget.style.display = 'none';
+    contactWidget.classList.remove('open');
+    contactToggle.setAttribute('aria-expanded', 'false');
   }
- });
+
+  contactToggle?.addEventListener('click', () => {
+    const isOpen = contactWidget.style.display === 'flex';
+    isOpen ? closeContact() : openContact();
+  });
+
+  contactClose?.addEventListener('click', closeContact);
+
+  contactForm?.addEventListener('submit', async e => {
+    e.preventDefault();
+    cfStatus.textContent = 'Sending...';
+    try {
+      await emailjs.send('service_saxdc56', 'template_ezh0s0d', {
+        user_name: contactForm.user_name.value,
+        user_email: contactForm.user_email.value,
+        subject: contactForm.subject.value,
+        message: contactForm.message.value,
+      });
+      cfStatus.textContent = '✅ Sent!';
+      contactForm.reset();
+    } catch (err) {
+      cfStatus.textContent = '❌ Failed to send.';
+      console.error(err);
+    } finally {
+      setTimeout(() => cfStatus.textContent = '', 5000);
+    }
+  });
 });
