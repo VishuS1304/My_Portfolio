@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatForm      = document.getElementById('chatbot-form');
   const chatInput     = document.getElementById('chatbot-input');
   const chatSend      = document.getElementById('chatbot-send');
-  const API_BASE      = 'http://127.0.0.1:8000';
+  const API_BASE      = 'https://my-portfolio-f6br.onrender.com';
   let sse = null;
 
   function openChat() {
