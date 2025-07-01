@@ -26,7 +26,7 @@ if not API_KEY.startswith("nvapi-"):
 # -------------------------------
 # Resume (Optional for additional context)
 # -------------------------------
-RESUME_PATH = "Vishwajit_Resume_250603_101508.pdf"
+RESUME_PDF = os.path.join(os.path.dirname(__file__), "D:\Vs_code\portfolio_website\Vishwajit_Resume_250603_101508.pdf")
 
 def load_resume(path: str, max_chars=15000) -> str:
     try:
@@ -45,8 +45,8 @@ def load_resume(path: str, max_chars=15000) -> str:
         logger.warning(f"Resume loading failed: {e}")
         return "[Resume could not be loaded]"
 
-logger.info("Loading resume from %s", RESUME_PATH)
-RESUME_TEXT = load_resume(RESUME_PATH)
+logger.info("Loading resume from %s", RESUME_PDF)
+RESUME_TEXT = load_resume(RESUME_PDF)
 
 # -------------------------------
 # Vishwajit’s Profile Prompt
