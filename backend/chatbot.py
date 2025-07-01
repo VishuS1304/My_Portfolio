@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 # Config
 load_dotenv()
 API_KEY    = os.getenv("NVIDIA_API_KEY", "")
-RESUME_PDF = "Vishwajit_Resume_250603_101508.pdf"
+RESUME_PDF = "D:\Vs_code\portfolio_website\Vishwajit_Resume_250603_101508.pdf"
 if not API_KEY.startswith("nvapi-"):
     raise RuntimeError("Invalid NVIDIA_API_KEY")
 
@@ -42,7 +42,7 @@ RESUME_TEXT = load_resume(RESUME_PDF)
 
 # LLM client
 llm = ChatNVIDIA(
-    model="meta/llama-3.3-70b-instruct",
+    model="meta/llama-3.2-3b-instruct",
     temperature=0.2,
     top_p=0.7,
     streaming=True,
