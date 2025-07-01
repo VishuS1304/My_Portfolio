@@ -131,7 +131,6 @@ nav ul li a:hover {
 /* Mobile Toggle */
 .mobile-toggle {
   display: none;
-  background: var(--blue);
   border: none;
   cursor: pointer;
   padding: 10px;
