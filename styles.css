@@ -73,37 +73,76 @@ header.hide {
 }
 
 
-/* Logo */
+/* Logo Holder */
 .logo-holder {
   display: flex;
   align-items: center;
   cursor: pointer;
+  gap: 12px;
+  text-decoration: none;
 }
 
+/* Logo Circle with Glow */
 .logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--blue);
-  color: white;
-  font-size: 28px;
-  font-weight: bold;
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  box-shadow: var(--shadow);
-  margin-right: 15px;
+  background: linear-gradient(135deg, #0a6a1e, #00c6ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px #00c6ff, 0 0 20px #0a6a1e;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
-  animation: float 3s ease-in-out infinite;
-}
-.logo:hover {
-  transform: rotateY(15deg) rotateX(5deg) scale(1.08);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  animation: floatLogo 4s ease-in-out infinite;
+  overflow: hidden;
 }
 
+/* Optional image inside logo */
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Hover Animation */
+.logo:hover {
+  transform: rotateY(10deg) rotateX(4deg) scale(1.08);
+  box-shadow: 0 0 16px #00eaff, 0 0 32px #0a6a1e;
+}
+
+/* Logo Text */
 .logo-text {
   font-weight: 700;
   font-size: 1.2rem;
+  color: black;
+  position: relative;
+}
+
+/* Optional typing effect */
+.typed-name::after {
+  content: '';
+  display: inline-block;
+  width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid #fff;
+  animation: typing 3s steps(22), blink 0.7s step-end infinite;
+}
+
+/* Typing effect */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+/* Float Animation */
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 /* Nav */
