@@ -1457,7 +1457,7 @@ h2::after {
   overflow: hidden;
   display: none;            /* hidden by default */
   flex-direction: column;
-  z-index: 10000;
+  z-index: 10002;
   animation: slideInUp 0.4s ease-out both;
 }
 #contact-widget.open {
