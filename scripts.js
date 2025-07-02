@@ -168,13 +168,29 @@ document.addEventListener('DOMContentLoaded', () => {
   // ———————————————————————————————————————————
   const dtEl = document.getElementById('currentDateTime');
   const yrEl = document.getElementById('year');
+
   function updateDateTime() {
     const now = new Date();
-    dtEl && (dtEl.textContent = now.toLocaleString());
-    yrEl && (yrEl.textContent = now.getFullYear());
+    const formatted = now.toLocaleString('en-IN', {
+      weekday: 'short',         // e.g., Mon
+      year: 'numeric',          // e.g., 2025
+      month: 'short',           // e.g., Jul
+      day: '2-digit',           // e.g., 02
+      hour: '2-digit',          // e.g., 10 PM
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true              // 12-hour format
+    });
+
+    if (dtEl) dtEl.textContent = formatted;
+    if (yrEl) yrEl.textContent = now.getFullYear();
   }
+
+  // Initial update
   updateDateTime();
-  setInterval(updateDateTime, 60000);
+
+  // Update every second
+  setInterval(updateDateTime, 1000);
 
   // ———————————————————————————————————————————
   // 6) Email Contact Widget (Optional)
