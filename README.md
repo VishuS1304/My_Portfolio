@@ -1,174 +1,125 @@
-# My Portfolio
+# 🧠 Vishwajit Singh — AI/ML Portfolio Website
 
-Welcome to my portfolio website! This repository contains the source code and configuration for both the frontend static site and the backend AI-powered chatbot API.
+Welcome to my professional AI portfolio — an interactive website showcasing my real-time AI projects, skills, and experience. It features an animated chatbot powered by NVIDIA LLaMA 3.3, a responsive UI, and light/dark themes.
 
----
-
-## 🚀 Live Demo
-
-* **Frontend**: https\://\<your-frontend-domain>
-* **Backend API**: https\://\<your-backend-domain>/chat/stream
-
-*(Replace `<your-frontend-domain>` and `<your-backend-domain>` with your actual custom or Render URLs.)*
+🌐 **Live Site**: [vishus1304.github.io/My_Portfolio](https://vishus1304.github.io/My_Portfolio/)
 
 ---
 
-## 📂 Repository Structure
+## 📌 Features
 
-```
-My_Portfolio/          # Static portfolio site (HTML/CSS/JS or framework source)
-├── index.html
-├── styles/
-├── scripts/
-├── backend/             # FastAPI chatbot backend
-│   ├── chatbot.py       # Main FastAPI application
-│   ├── requirements.txt # Python dependencies
-│   ├── Procfile         # Render start command
-│   ├── .env.example     # Environment variable template
-│   └── ...
-├── README.md            # This file
-└── .gitignore
-```
+- ✅ Modern, mobile-responsive design
+- 🧠 AI chatbot (FastAPI + NVIDIA LLaMA 3.3)
+- 📥 Resume viewer & downloader
+- 🌙 Theme toggle (light/dark)
+- 🎯 Real projects with live GitHub links
+- ⬆️ Scroll-to-top & animated social icons
+- 📬 Contact form with EmailJS
 
 ---
 
-## 🛠️ Frontend Setup & Deployment
+## 🗂 Project Structure
 
-### Prerequisites
-
-* Node.js (v16+)
-* npm or yarn
-
-### Local Development
-
-1. Navigate to the frontend directory:
-
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies (if using a framework):
-
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-3. Start a local development server:
-
-   * **Static HTML**: open `index.html` in your browser.
-   * **React/Vue/Svelte**:
-
-     ```bash
-     npm run dev
-     # or
-     yarn dev
-     ```
-4. Build for production:
-
-   ```bash
-   npm run build
-   # or
-   yarn build
-   ```
-5. Preview the build locally (optional):
-
-   ```bash
-   npx serve build
-   ```
-
-### Deploy to GitHub Pages
-
-1. Ensure your build output is in a folder named `docs` or root.
-2. In `package.json`, add:
-
-   ```json
-   "homepage": "https://<username>.github.io/<repo>/"
-   ```
-3. Push to GitHub and configure Pages:
-
-   * Go to **Settings → Pages**
-   * Source: `main` branch → `/root` or `/docs`
+```bash
+My_Portfolio/
+├── backend
+│     ├── chatbot.py         # FastAPI app for AI chatbot
+│     ├── requirements.txt   # Python packages for backend
+│     └── resume             # PDF resume used by chatbot
+│        
+├── index.html               # Main HTML file
+├── styles.css               # Custom styles for entire site
+├── scripts.js               # JS for chatbot, scroll, theme toggle
+├── images/                  # Icons, screenshots, logos
+├── LICENSE                  # MIT License
+└── README.md                # This file
+````
 
 ---
 
-## ⚙️ Backend Setup & Deployment
+## 🧰 Tech Stack
 
-### Prerequisites
+| Category     | Tools & Frameworks                                   |
+| ------------ | ---------------------------------------------------- |
+| Frontend     | HTML, CSS, JavaScript                                |
+| Backend      | Python, FastAPI, LangChain, PyPDF2                   |
+| AI Model     | NVIDIA LLaMA 3.3 via `langchain_nvidia_ai_endpoints` |
+| Deployment   | GitHub Pages (Frontend)                              |
+| Chat API     | FastAPI on localhost or Render                       |
+| Integrations | EmailJS, GitHub, LinkedIn                            |
 
-* Python 3.8+
-* pip
+---
 
-### Local Development
+## 🚀 Getting Started (Local Setup)
 
-1. Navigate to the backend directory:
+### 📦 Prerequisites
+
+* Python 3.9+
+* `pip` for installing dependencies
+
+### 🔧 Backend Setup (Chatbot)
+
+1. Clone the repo:
 
    ```bash
-   cd backend
+   git clone https://github.com/VishuS1304/My_Portfolio.git
+   cd My_Portfolio
    ```
-2. Create & activate a virtual environment:
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # Linux/macOS
-   venv\Scripts\activate    # Windows
-   ```
-3. Install dependencies:
+2. Install dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
-4. Copy & configure environment variables:
 
-   ```bash
-   cp .env.example .env
+3. Set up your `.env` file:
+
+   ```env
+   NVIDIA_API_KEY=nvapi-xxxxxxxxxxxxxxxxxxxx
    ```
 
-   * Fill in your `NVIDIA_API_KEY` and `ALLOWED_ORIGINS` values in `.env`.
-5. Run the FastAPI server:
+4. Run the backend:
 
    ```bash
-   uvicorn chatbot:app --reload
-   ```
-6. Test the health endpoint:
-
-   ```bash
-   curl http://127.0.0.1:8000/health
+   uvicorn backend-chatbot:app --reload
    ```
 
-### Deploy to Render
-
-1. Push `main` branch to GitHub.
-2. In [Render Dashboard](https://dashboard.render.com/):
-
-   * **New → Web Service**
-   * Connect your repo and select branch `main`.
-   * **Root Directory**: `backend`
-   * **Build Command**: `pip install -r requirements.txt`
-   * **Start Command**: `uvicorn chatbot:app --host 0.0.0.0 --port $PORT`
-   * **Environment Variables**: add `NVIDIA_API_KEY`, `ALLOWED_ORIGINS`, etc.
-3. Click **Create Web Service** and wait for deployment.
-4. Note the generated URL: `https://<your-backend>.onrender.com`
+Backend will run at `http://127.0.0.1:8000`.
 
 ---
 
-## 🔧 Configuration
+## 🌐 Frontend Setup
 
-* **Environment Variables** (backend):
+1. Open `index.html` in your browser.
+2. Ensure chatbot API in `scripts.js` matches backend:
 
-  * `NVIDIA_API_KEY` – API key for NVIDIA LLM service.
-  * `ALLOWED_ORIGINS` – Comma-separated list of allowed CORS origins.
-
-* **CORS**: Ensure `ALLOWED_ORIGINS` matches your frontend deployment URL(s).
-
----
-
-## 📞 Contact & Contributions
-
-Feel free to open issues or submit pull requests. For questions or feedback, reach out:
-
-* Email: [vishwajitsingh1304@gmail.com](mailto:vishwajitsingh1304@gmail.com)
-* GitHub: [https://github.com/VishuS1304](https://github.com/VishuS1304)
+   ```js
+   const API_BASE = "http://127.0.0.1:8000";
+   ```
 
 ---
 
-© 2025 Vishwajit Singh. All rights reserved.
+## 🧠 How the AI Chatbot Works
+
+* Loads your PDF resume from `resume/`
+* Uses `langchain_nvidia_ai_endpoints` to query LLaMA 3.3
+* Responds in real-time via Server-Sent Events (SSE)
+
+---
+
+## 📬 Contact
+
+* ✉️ Email: [vishwajitsingh1304@gmail.com](mailto:vishwajitsingh1304@gmail.com)
+* 💼 LinkedIn: [linkedin.com/in/vishwajit-singh-69175319b](https://linkedin.com/in/vishwajit-singh-69175319b)
+* 👨‍💻 GitHub: [github.com/VishuS1304](https://github.com/VishuS1304)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License. See [`LICENSE`](LICENSE) for details.
+
+---
+
+> Built with ❤️ by Vishwajit Singh — AI Developer focused on real-time ML, autonomous agents & intelligent automation.
+
